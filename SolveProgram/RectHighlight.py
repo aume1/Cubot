@@ -56,7 +56,7 @@ while(1):
 
     # Threshold the HSV image to get onlycolors
     fmask = cv2.inRange(hsv, lower_green, upper_green)
-    #fmask = cv2.add(fmask, cv2.inRange(hsv, lower_red, upper_red))
+    fmask = cv2.add(fmask, cv2.inRange(hsv, lower_red, upper_red))
 
     # Bitwise-AND mask and original image
     res = cv2.bitwise_and(frame,frame, mask= fmask)
