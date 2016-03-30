@@ -25,13 +25,28 @@ while(1):
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
     hsvOrig = hsv
 
+    # So apparently HSV has ranges of
+    #   H: 0-179
+    #   S: 0-255
+    #   V: 0-255
+    # So that affects my thinking and math behind this all.
+    #
+    # I thought online HSV generators were out of 360, and the H range was from
+    # 0-255, so I divided the online H value by 360 and multiplied by 255 to get
+    # the result, but now if I take the H value from online and divide by two,
+    # it should give an actual logical result.
+
     # HSV Green
     lower_green = np.array([60, 50, 50])
     upper_green = np.array([90, 200, 225])
 
-    # HSV Red
-    lower_red = np.array([0, 50, 50])
-    upper_red = np.array([255, 255, 255])
+    # HSV Red Low
+    lower_red1 = np.array([0, 50, 50])
+    upper_red1 = np.array([20, 255, 255])
+
+    # HSV Red High
+    lower_red2 = np.array([160, 50, 50])
+    upper_red2 = np.array([170, 255, 255])
 
     # Old green
     #lower_green = np.array([40,100,50])
@@ -56,13 +71,14 @@ while(1):
 
     # Threshold the HSV image to get onlycolors
     fmask = cv2.inRange(hsv, lower_green, upper_green)
-    fmask = cv2.add(fmask, cv2.inRange(hsv, lower_red, upper_red))
+    fmask = cv2.add(fmask, cv2.inRange(hsv, lower_red1, upper_red1))
+    fmask = cv2.add(fmask, cv2.inRange(hsv, lower_red2, upper_red2))
 
     # Bitwise-AND mask and original image
     res = cv2.bitwise_and(frame,frame, mask= fmask)
 
     # Erode res
-    kernel = np.ones((7, 7), np.uint8)
+    kernel = np.ones((3, 3), np.uint8)
     res = cv2.erode(res, kernel, iterations = 1)
     res = cv2.dilate(res, kernel, iterations = 1)
 
